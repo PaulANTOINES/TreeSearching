@@ -1,0 +1,126 @@
+/* Ce fichier est encodÃ© en UTF-8 et suit la syntaxe du langage Prolog      */
+
+
+
+/*****************************************************************************
+* On suppose que l'on dispose d'un domaine de problÃ¨me, caractÃ©risÃ© par 
+*  - une relation operateur/3
+*  - une relation but/1
+*
+* On souhaite coder un algorithme de recherche de chemin solution de faisant 
+* aucune autre hypothÃ¨se que celle de la modÃ©lisation du domaine du problÃ¨me
+* a l'aide des relations prÃ©cÃ©dentes.
+*
+* DÃ©finir les relations suivantes : 
+*************************************************************************/
+
+
+/*****************************************************************************
+* rprof(+Etat,-Solution)	  qui est vrai si et seulement si Solution est une suite
+*					      d'Ã©tats caractÃ©risant un chemin solution depuis Etat
+*						  vers un Ã©tat du But.
+******************************************************************************/
+
+rprof(Etat,[Etat]) :-
+    but(Etat).
+    
+rprof(EtatI,[X|Q]) :-
+    operateur(_,EtatI,X),
+    rprof(X,Q).
+
+
+
+/*****************************************************************************
+* rprof_ss_cycle(+Etat,-Solution)	  qui est vrai si et seulement si Solution est 
+*			une suite d'Ã©tats sans cycle, caractÃ©risant un chemin solution depuis
+*			Etat vers un Ã©tat du But.
+******************************************************************************/
+
+
+rprof_ss_cycle_bis(Etat,[Etat],_) :-
+    but(Etat),
+    !.
+    
+rprof_ss_cycle_bis(EtatI,[Etat2|ListEtats],DejaVu) :-
+    operateur(_,EtatI,Etat2),
+    not(member(Etat2,DejaVu)),
+    rprof_ss_cycle_bis(Etat2,ListEtats,[EtatI|DejaVu]).
+
+rprof_ss_cycle(Etat,Solution) :-
+    rprof_ss_cycle_bis(Etat,Solution,[]).
+    
+    
+/*****************************************************************************
+* Une nouvelle version de ce prÃ©dicat permettant limiter
+* la profondeur de recherche.
+*  
+* rprof_bornee(+Etat,-Solution,+ProfMax)
+*     qui est vrai si et seulement si Solution est une suite d'au plus ProfMax
+*	  Ã©tats caractÃ©risant un chemin solution depuis Etat vers un Ã©tat du But.
+******************************************************************************/
+
+%% Sans cycle :
+
+rprof_bornee(Etat,[Etat],_) :-
+    but(Etat),
+    !.
+    
+rprof_bornee(_,_,0) :-
+    5 = 4, %%Renvoie une erreur
+    !.
+    
+rprof_bornee(EtatI,[X|Q],Y) :-
+    operateur(_,EtatI,X),
+    Y > 0,
+    rprof_bornee(X,Q,Y-1).
+
+
+
+%%Avec cycle :
+
+rprof_bornee_ss_cycle_bis(Etat,[Etat],_,Y) :-
+    Y>0,
+    but(Etat),
+    !.
+    
+rprof_bornee_ss_cycle_bis(_,_,_,0) :-
+    5 = 4, %%Renvoie une erreur
+    !.
+    
+rprof_bornee_ss_cycle_bis(EtatI,[Etat2|ListEtats],DejaVu,Y) :-
+    operateur(_,EtatI,Etat2),
+    not(member(Etat2,DejaVu)),
+    Y > 0,
+    X is Y-1,
+    rprof_bornee_ss_cycle_bis(Etat2,ListEtats,[EtatI|DejaVu],X).
+    
+rprof_bornee_ss_cycle(EtatI,[X|Q],Y) :-
+    rprof_bornee_ss_cycle_bis(EtatI,[X|Q],[],Y).
+
+
+/*****************************************************************************
+* rprof_incr(+Etat,-Solution,+ProfMax)
+*     qui est vrai si et seulement si Solution est une suite d'au plus ProfMax
+*	  Ã©tats caractÃ©risant recherchÃ©e suivant une stratÃ©gie de recherche itÃ©rative
+*     Ã  profondeur incrÃ©mentale.
+******************************************************************************/
+
+
+rprof_incr(EtatI,[X|Q],Palier_max) :-
+    rprof_incr_palier(EtatI,[X|Q],Palier_max,1).
+
+rprof_incr_palier(EtatI,[X|Q],_,Rang) :-
+    rprof_bornee_ss_cycle(EtatI,[X|Q],Rang).
+    
+rprof_incr_palier(EtatI,[X|Q],Palier_max,Rang) :-
+    Rg is Rang + 1,
+    Rg =< Palier_max,
+    rprof_incr_palier(EtatI,[X|Q],Palier_max,Rg).
+
+
+
+
+
+
+
+
