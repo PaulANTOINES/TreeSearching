@@ -1,0 +1,107 @@
+/* Ce fichier est encodÃ© en UTF-8 et suit la syntaxe du langage Prolog      */
+
+/*****************************************************************************
+*              ModÃ©lisation du domaine du problÃ¨me des cruches
+******************************************************************************/
+
+
+/*****************************************************************************
+* Question 1 :  
+*
+* Proposer une structure permettant de reprÃ©senter un Ã©tat pour le problÃ¨me
+* des cruches (nb il n'y a pas de relation Ã  dÃ©finir - dÃ©crire juste la
+* structure que vous comptez utiliser, en prÃ©cisant le sens de chaque argument)
+*
+* RÃ©ponse : 
+*			On reprÃ©sente un Ã©tat par cruches(P,G).     
+*           
+* oÃ¹... 
+*         P et G reprÃ©sentent la contenance des cruches.   
+*         Pmax et Gmax reprÃ©sentent les contenances maximales des cruches.
+*         Obj reprÃ©sente la quantitÃ© d'eau Ã  obtenir dans une cruche.
+******************************************************************************/
+capacites(5,7).
+
+/*****************************************************************************
+* Question 2 : Ecrire le code du prÃ©dicat :
+* etat_cruche(Terme)  qui est vrai si et seulement si Terme est un terme prolog
+*                     qui reprÃ©sente bien un Ã©tat pour le problÃ¨me des cruches.
+******************************************************************************/
+etat_cruche(cruches(P,G)) :-
+    
+
+    P >= 0,
+    
+
+    G >= 0,
+
+    capacites(Pmax,Gmax),
+        
+
+    Pmax >= P,
+    
+
+    Gmax >= G.
+    
+
+
+
+/*****************************************************************************
+* Question 3 : DÃ©finir le prÃ©dicat :
+* operateur(Nom,Etat,NEtat)	  qui est vrai si et seulement si Nom est le nom
+*							  d'un opÃ©rateur pour le problÃ¨me des cruches
+*							  applicable et permettant de faire passer d'un Ã©tat
+*							  Etat Ã  un nouvel Ã©tat NEtat.
+******************************************************************************/
+operateur(rg,cruches(P,G),cruches(P,Gmax)) :-
+    etat_cruche(cruches(P,G)),
+    capacites(_,Gmax),
+    G < Gmax.
+
+operateur(rp,cruches(P,G),cruches(Pmax,G)) :-
+    etat_cruche(cruches(P,G)),
+    capacites(Pmax,_),
+    P < Pmax.
+
+operateur(vg,cruches(P,G),cruches(P,0)) :-
+    etat_cruche(cruches(P,G)),
+    G > 0.
+    
+operateur(vp,cruches(P,G),cruches(0,G)) :-
+    etat_cruche(cruches(P,G)),
+    P > 0.
+    
+operateur(tgp,cruches(P,G),cruches(Pnew,Gnew)) :-
+    etat_cruche(cruches(P,G)),
+    capacites(Pmax,_),
+    G > 0,
+    P < Pmax,
+    Pnew is min(P+G,Pmax),
+    Gnew is max(0,G-Pmax+P).
+    
+operateur(tpg,cruches(P,G),cruches(Pnew,Gnew)) :-
+    etat_cruche(cruches(P,G)),
+    capacites(_,Gmax),
+    P > 0,
+    G < Gmax,
+    Gnew is min(G+P,Gmax),
+    Pnew is max(0,P-Gmax+G).
+
+
+/*****************************************************************************
+* Question 4 : DÃ©finir le prÃ©dicat : 
+* but(Etat)	  qui est vrai si et seulement si Etat est un Ã©tat but pour 
+              le problÃ¨me des cruches.
+******************************************************************************/
+but(cruches(Obj,G)) :-
+    etat_cruche(cruches(Obj,G)),
+    Obj == 4,
+    !.
+    
+but(cruches(P,Obj)) :-
+    etat_cruche(cruches(P,Obj)),
+    Obj == 4,
+    !.
+
+
+
