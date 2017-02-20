@@ -1,0 +1,61 @@
+/* Ce fichier est encodÃ© en UTF-8 et suit la syntaxe du langage Prolog      */
+
+/*****************************************************************************
+*					          PARTIE 4
+*
+* L'algorithme de recherche en profondeur s'implÃ©mente tres facilement en Prolog
+* car la stratÃ©gie de preuve mise en oeuvre par le dÃ©monstrateur de Prolog
+* suit elle mÃªme une stratÃ©gie en profondeur.
+* 
+* Le codage de l'algorithme de recherche en largeur est un peu moins direct
+* car on a besoin de pouvoir connaitre tous les successeurs d'un Ã©tat.
+*
+* Pour cela il existe un prÃ©dicat prÃ©dÃ©fini en prolog, qui permet de trouver
+* toutes les solutions d'un but. Ce prÃ©dicat s'appelle findall/3.
+*
+******************************************************************************/
+
+/*****************************************************************************
+1) lisez la documentation de ce prÃ©dicat en tapant help(findall/3)
+     et testez le sur des exemples simples pour bien le comprendre.
+******************************************************************************/
+
+
+/*****************************************************************************
+* 2) Pour connaÃ®tre les tous les succeseurs d'un Ã©tat E il suffira alors 
+* d'utiliser :
+*      	...
+*       findall(NE, operateur(_,E,NE), Successeurs)
+*       ....
+*
+* vÃ©rifiez cela manuellement sur quelques Ã©tats des cruches et/ou du taquin
+******************************************************************************/
+
+
+/*****************************************************************************
+* 3) Le codage de l'algorithme de recherche en profondeur nÃ©cessite alors
+* de construire le graphe de recherche et sa frontiÃ¨re.
+* une faÃ§on simple de reprÃ©senter la structure de ce graphe est de 
+* reprÃ©senter chaque noeud par une structure de la forme : 
+*
+*      nd(E, Pere) 
+* 
+* oÃ¹ - E est l'Ã©tat associÃ© au noeud
+*    - Pere est le noeud parent de ce noeud (ou nil si le noeud correspond Ã  l'Ã©tat initial)
+* 
+* On peut alors reprÃ©senter la frontiÃ¨re simplement par une liste de noeuds.
+* mais pour garantir que l'exploration s'effectue bien en largeur il faudra bien
+* veiller Ã  dÃ©velopper Ã  chaque Ã©tape, le noeud le plus ancien parmi ceux de la frontiÃ¨re
+* (attention Ã  la faÃ§on dont vous rajoutez des noeuds Ã  la frontiÃ¨re).
+* 
+* Definir le prÃ©dicat :
+* rech_larg(E,Sol) qui construit un chemin solution depuis l'Ã©tat E, en construisant le graphe
+*                  de recherche suivant une stratÃ©gie en largeur d'abord.
+*
+* nb : Vous aurez besoin de dÃ©finir 
+*		une procÃ©dure auxiliaire, qui explicite la frontiÃ¨re du graphe et effectue la recherche
+*		une procÃ©dure auxiliaire qui reconstruit le chemin solution lorsqu'un Ã©tat but a Ã©tÃ© atteint.
+* 	
+******************************************************************************/
+
+
