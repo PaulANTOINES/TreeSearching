@@ -1,0 +1,270 @@
+/* Ce fichier est encodÃ© en UTF-8 et suit la syntaxe du langage Prolog      */
+
+/*****************************************************************************
+ 			    Introduction Ã  l'Intelligence Artificielle					 
+					ENSTA 1Ã¨re annÃ©e - Cours INT23
+*****************************************************************************/
+
+  
+/*****************************************************************************
+* On considÃ¨re le jeu du taquin et on dÃ©cide de reprÃ©senter un Ã©tat 
+*  chaque Ã©tat pour ce problÃ¨me par une structure de la forme 
+*  
+*     et( A, B, C, 
+*		  D, E, F, 
+*		  G, H, I)
+*
+* tel que : 
+* - [A,B,C,D,E,F,G,H] est une permutation de la liste [0,1,2,3,4,5,6,7,8] 
+* - 0 reprÃ©sente la case vide et les autres entiers les pieces portant ce numÃ©ro
+* - A,B,C reprÃ©sente la premiÃ¨re ligne, D,E,F, la seconde ligne et G, H, I la 
+*   troisiÃ¨me ligne
+*
+* DÃ©finir les prÃ©dicats suivants : 
+*******************************************************************************/
+
+
+/*****************************************************************************
+* etat_taquin(Terme)  qui est vrai si et seulement si Terme est un terme prolog
+*                     qui reprÃ©sente bien un Ã©tat pour le problÃ¨me du taquin.
+******************************************************************************/
+
+/*VÃ©rifie que tout Ã©lÃ©ment de Q n'est prÃ©sent q'une seule fois*/
+diff([]).
+diff([X|Q]) :-
+    not(member(X,Q)),
+    diff(Q).
+    
+
+etat_taquin(taquin(A,B,C,D,E,F,G,H,I)) :-
+    
+    /*VÃ©rifie que tout Ã©lÃ©ment est compris entre 0 et 8*/
+    member(A,[0,1,2,3,4,5,6,7,8]),
+    member(B,[0,1,2,3,4,5,6,7,8]),
+    member(C,[0,1,2,3,4,5,6,7,8]),
+    member(D,[0,1,2,3,4,5,6,7,8]),
+    member(E,[0,1,2,3,4,5,6,7,8]),
+    member(F,[0,1,2,3,4,5,6,7,8]),
+    member(G,[0,1,2,3,4,5,6,7,8]),
+    member(H,[0,1,2,3,4,5,6,7,8]),
+    member(I,[0,1,2,3,4,5,6,7,8]),
+    
+    /*VÃ©rifie que tout Ã©lÃ©ment n'est prÃ©sent q'une seule fois*/
+    diff([A,B,C,D,E,F,G,H,I]).
+    
+
+
+
+/*****************************************************************************
+* operateur(Nom,Etat,NEtat)	  qui est vrai si et seulement si Nom est le nom
+*							  d'un opÃ©rateur pour le problÃ¨me du taquin
+*							  applicable et permettant de faire passer d'un Ã©tat
+*							  Etat Ã  un nouvel Ã©tat NEtat.
+******************************************************************************/
+/*OpÃ©rateurs qui permettent de descendre une des 6 premiÃ¨res cases (A,B,C,D,E,F) */
+
+operateur(up1,taquin(A,B,C,0,E,F,G,H,I),taquin(0,B,C,A,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,0,E,F,G,H,I)). 
+    
+operateur(up2,taquin(A,B,C,D,0,F,G,H,I),taquin(A,0,C,D,B,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,0,F,G,H,I)).
+    
+operateur(up3,taquin(A,B,C,D,E,0,G,H,I),taquin(A,B,0,D,E,C,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,0,G,H,I)).
+    
+operateur(up4,taquin(A,B,C,D,E,F,0,H,I),taquin(A,B,C,0,E,F,D,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,0,H,I)). 
+    
+operateur(up5,taquin(A,B,C,D,E,F,G,0,I),taquin(A,B,C,D,0,F,G,E,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,G,0,I)).
+    
+operateur(up6,taquin(A,B,C,D,E,F,G,H,0),taquin(A,B,C,D,E,0,G,H,F)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,G,H,0)).
+    
+    
+    
+/*OpÃ©rateurs qui permettent de monter une des 6 derniÃ¨res cases (D,E,F,G,H,I) */   
+
+operateur(down1,taquin(0,B,C,D,E,F,G,H,I),taquin(D,B,C,0,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(0,B,C,D,E,F,G,H,I)).
+    
+operateur(down2,taquin(A,0,C,D,E,F,G,H,I),taquin(A,E,C,D,0,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,0,C,D,E,F,G,H,I)).
+    
+operateur(down3,taquin(A,B,0,D,E,F,G,H,I),taquin(A,B,F,D,E,0,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,0,D,E,F,G,H,I)).
+    
+operateur(down4,taquin(A,B,C,0,E,F,G,H,I),taquin(A,B,C,G,E,F,0,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,0,E,F,G,H,I)).
+    
+operateur(down5,taquin(A,B,C,D,0,F,G,H,I),taquin(A,B,C,D,H,F,G,0,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,0,F,G,H,I)).
+    
+operateur(down6,taquin(A,B,C,D,E,0,G,H,I),taquin(A,B,C,D,E,I,G,H,0)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,0,G,H,I)).
+    
+    
+
+/*OpÃ©rateurs qui permettent de bouger Ã  droite une des 6 cases de gauche (A,B,D,E,G,H) */
+operateur(left1,taquin(A,0,C,D,E,F,G,H,I),taquin(0,A,C,D,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,0,C,D,E,F,G,H,I)).
+    
+operateur(left2,taquin(A,B,0,D,E,F,G,H,I),taquin(A,0,B,D,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,0,D,E,F,G,H,I)).
+    
+operateur(left3,taquin(A,B,C,D,0,F,G,H,I),taquin(A,B,C,0,D,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,0,F,G,H,I)).
+    
+operateur(left4,taquin(A,B,C,D,E,0,G,H,I),taquin(A,B,C,D,0,E,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,0,G,H,I)).
+    
+operateur(left5,taquin(A,B,C,D,E,F,G,0,I),taquin(A,B,C,D,E,F,0,G,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,G,0,I)).
+    
+operateur(left6,taquin(A,B,C,D,E,F,G,H,0),taquin(A,B,C,D,E,F,G,0,H)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,G,H,0)).
+
+
+
+/*OpÃ©rateurs qui permettent de bouger Ã  gauche une des 6 cases de droite (B,C,E,F,H,I) */
+
+operateur(right1,taquin(0,B,C,D,E,F,G,H,I),taquin(B,0,C,D,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(0,B,C,D,E,F,G,H,I)).
+
+operateur(right2,taquin(A,0,C,D,E,F,G,H,I),taquin(A,C,0,D,E,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,0,C,D,E,F,G,H,I)).
+    
+operateur(right3,taquin(A,B,C,0,E,F,G,H,I),taquin(A,B,C,E,0,F,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,0,E,F,G,H,I)).
+    
+operateur(right4,taquin(A,B,C,D,0,F,G,H,I),taquin(A,B,C,D,F,0,G,H,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,0,F,G,H,I)).
+
+operateur(right5,taquin(A,B,C,D,E,F,0,H,I),taquin(A,B,C,D,E,F,H,0,I)) :-
+    
+    etat_taquin(taquin(A,B,C,D,E,F,0,H,I)).
+    
+operateur(right6,taquin(A,B,C,D,E,F,G,0,I),taquin(A,B,C,D,E,F,G,I,0)) :-
+
+    etat_taquin(taquin(A,B,C,D,E,F,G,0,I)).
+
+
+
+
+/*****************************************************************************
+* but(Etat)	  qui est vrai si et seulement si Etat est un Ã©tat but pour 
+              le problÃ¨me du taquin.
+******************************************************************************/
+
+but(taquin(A,B,C,D,E,F,G,H,I)) :-
+    etat_taquin(taquin(A,B,C,D,E,F,G,H,I)),
+    A = 1,
+    B = 2,
+    C = 3,
+    D = 8,
+    E = 0,
+    F = 4,
+    G = 7,
+    H = 6,
+    I = 5,
+    !.
+         
+
+/*****************************************************************************
+* eval_heuristique(H,Etat,ValeurH)	  qui est vrai si et seulement si ValeurH est l'heuristique H de l'Ã©tat Etat du problÃ¨me du taquin, de but [1,2,3,8,0,4,7,6,5].
+
+Etat doit Ãªtre une liste du type [A,B,C,D,E,F,G,H,I] (nous n'avons pas rÃ©ussit Ã  faire marcher la fonction avec taquin(A,B,C,D,E,F,G,H,I).
+
+H prend pour valeur h1 ou h2.
+h1 reprÃ©sente le nombre de tuiles mal placÃ©es.
+h2 reprÃ©sente la distance de Manhatan, c'est Ã  dire le nombre minimum de dÃ©placement entre une case et son Ã©tat but.
+
+******************************************************************************/
+eval_heuristique(h1,R,ValeurH) :-
+    
+    difff(R,[1,2,3,8,0,4,7,6,5],0,ValeurH).
+  
+eval_heuristique(h2,T,ValeurH) :-
+    diffIndice(T,0,[1,2,3,8,0,4,7,6,5],0,ValeurH).   
+  
+/*****************************************************************************
+* Calcul Heuristique h1 :
+
+- difff calcule le nombre d'Ã©lÃ©ments qui n'ont pas le mÃªme indice entre R et [1,2,3,8,0,4,7,6,5]
+******************************************************************************/
+  
+difff([],[],Z,Z).
+difff(X,X,Z,Z).  
+
+difff([ElemIL1|ResteL1],[ElemIL2|ResteL2],Compteur,Sortie) :-
+    ElemIL1 is ElemIL2,
+    difff(ResteL1,ResteL2,Compteur,Sortie).
+    
+difff([ElemIL1|ResteL1],[ElemIL2|ResteL2],Compteur,Sortie) :-
+    not(ElemIL1 is ElemIL2),
+    Compteurp is Compteur+1,
+    difff(ResteL1,ResteL2,Compteurp,Sortie). 
+    
+
+/*****************************************************************************
+* Calcul Heuristique h2 :
+
+- diffIndice renvoit Total, qui est la somme du nombre de dÃ©placement minimum Ã  faire pour remettre une case Ã  son bon endroit (elle fait la somme des diffÃ©rences de longueur et de largeur par rapport Ã  la case de l'Ã©tat but)
+
+- indExt renvoit l'indice de la position d'un Ã©lÃ©ment dans une liste
+******************************************************************************/
+
+diffIndice([],_,_,Total,Total).
+
+diffIndice([X|Q],Indice,[1,2,3,8,0,4,7,6,5],Y,Total) :-
+
+    Long is (Indice mod 3),
+    Larg is ((Indice//3)+1),
+    
+    ind(X,[1,2,3,8,0,4,7,6,5],Id),
+    R is Id,
+    Long2 is (R mod 3),
+    Larg2 is ((R//3)+1),
+    
+    T is abs(Larg-Larg2),
+    T1 is abs(Long-Long2),
+    T2 is T+T1,
+    T3 is T2 + Y,
+    
+    Indicep is Indice+1,
+    diffIndice(Q,Indicep,[1,2,3,8,0,4,7,6,5],T3,Total).
+  
+  
+    
+ind(X,[T|Q],Indice) :-
+    indExt(X,[T|Q],0,Indice).
+    
+indExt(X,[X|Q],Y,Y).
+indExt(X,[T|Q],Y,Indice) :-
+    not(X is T),
+    Y1 is Y+1,
+    indExt(X,Q,Y1,Indice).
+    
+    
